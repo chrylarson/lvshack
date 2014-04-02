@@ -7,28 +7,28 @@ angular.module('lvshackApp')
     $scope.updateEmail = function (email) {
     	if(typeof $scope.email !== 'undefined') {
     		$scope.$storage.email = $scope.email;
-    		$location.path('/');
-    		register($scope.email);
+    		$location.path('/shack');
+    		//register($scope.email);
     	} else if(typeof $scope.$storage.email !== 'undefined'){
     		$location.path('/');
-    		register($scope.email);
+    		//register($scope.email);
     	}
 
     }
 
-    function register(email) {
-		$http({
-	        url: $rootScope.url + "user",
-	        method: "POST",
-	        timeout: 10000,
-	        data: JSON.stringify({"_id": $scope.email}),
-	        headers: {'Content-Type': 'application/json'}
-	    }).success(function(data) {
-	    	console.log("registered: " + $scope.email);
+  //   function register(email) {
+		// $http({
+	 //        url: $rootScope.url + "user",
+	 //        method: "POST",
+	 //        timeout: 10000,
+	 //        data: JSON.stringify({"_id": $scope.email}),
+	 //        headers: {'Content-Type': 'application/json'}
+	 //    }).success(function(data) {
+	 //    	console.log("registered: " + $scope.email);
 
-	        }).error(function(data, status) {
-	        	console.log("failed register");
+	 //        }).error(function(data, status) {
+	 //        	console.log("failed register");
 
-	        });
-    }
+	 //        });
+  //   }
   });

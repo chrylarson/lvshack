@@ -22,7 +22,7 @@ module.exports = function (grunt) {
     yeoman: {
       // configurable paths
       app: require('./bower.json').appPath || 'app',
-      dist: 'dist'
+      dist: '../www'
     },
 
     // Watches files for changes and runs tasks based on the changed files
@@ -111,6 +111,9 @@ module.exports = function (grunt) {
 
     // Empties folders to start fresh
     clean: {
+      options: {    
+        force: true  
+      },
       dist: {
         files: [{
           dot: true,
@@ -255,7 +258,7 @@ module.exports = function (grunt) {
             '.htaccess',
             '*.html',
             'views/{,*/}*.html',
-            'bower_components/**/*',
+            //'bower_components/**/*',
             'images/{,*/}*.{webp}',
             'fonts/*'
           ]
@@ -321,7 +324,21 @@ module.exports = function (grunt) {
         configFile: 'karma.conf.js',
         singleRun: true
       }
-    }
+    },
+        shell: {  
+          cordova: { 
+          options: {                      // Options
+                stdout: true
+            },                             
+            command: 'cordova build android' 
+          },
+          dropbox: { 
+          options: {                      // Options
+                stdout: true
+            },                             
+            command: 'cp ~/android/lvshack/platforms/android/ant-build/lvShack-debug.apk ~/Dropbox/Angular/lvShack-debug.apk' 
+          }
+        }
   });
 
 
@@ -367,7 +384,8 @@ module.exports = function (grunt) {
     'uglify',
     'rev',
     'usemin',
-    'htmlmin'
+    'htmlmin',
+    'shell'
   ]);
 
   grunt.registerTask('default', [

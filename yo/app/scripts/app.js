@@ -34,9 +34,9 @@ angular.module('lvshackApp', [
         $rootScope.url = "http://ec2-54-204-111-15.compute-1.amazonaws.com/";
         console.log($rootScope.$storage.email);
           if (typeof $rootScope.$storage.email !== 'undefined') {
-            $location.path('');
+            $location.path('/shack');
           }
           else {
-            $location.path('/main');
+            $location.path('/');
           }
     }]);

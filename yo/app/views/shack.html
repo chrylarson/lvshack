@@ -13,9 +13,10 @@
     </div>
   </div>
 </div>
+<br >
 <div class="row">
   <div class="col-sm-12">
-    <div ng-repeat="beacon in bands" >
+    <div ng-repeat="beacon in beacons" >
       <div class="panel panel-primary">
         <div class="panel-heading">
            <h3>{{beacon.headline}} <i class="glyphicon glyphicon-star" ng-show="beacon.isLiked"></i></h3> 
@@ -23,7 +24,21 @@
         <div class="panel-body">
           <div class="row">
             <div class="col-xs-6">
-              <img class="img-responsive" style="width:100%" ng-src="{{beacon.image}}" />
+              <div class="row">
+             Major ID: {{beacon.uuid}}
+            </div>
+            <div class="row">
+             Minor ID: {{beacon.minor}}
+            </div>
+            <div class="row">
+             Power Factor: {{beacon.power}}
+            </div>
+            <div class="row">
+             RSSI: {{beacon.rssi}}
+            </div>
+            <div class="row">
+             Distance: {{beacon.dis}}
+            </div>
             </div>
             <div class="col-xs-6">
               <button class="btn btn-default pull-right" data-toggle="modal" ng-click="modalOpen(beacon)" data-target="#myModal">
@@ -55,10 +70,13 @@
           </div>
           <div class="col-xs-6">
             <div class="row">
-              <a ng-click="openWebsite(modalBeacon.links)" ng-show="modalBeacon.links">Band's Website</a>
+              {{modalBeacon.uuid}}
             </div>
             <div class="row">
-              <a ng-click="openWebsite(modalBeacon.bands_in_town)" ng-show="modalBeacon.bands_in_town">Concert Schedule</a>
+              {{modalBeacon.minor}}
+            </div>
+            <div class="row">
+              {{modalBeacon.power}}
             </div>
           </div>
         </div>
