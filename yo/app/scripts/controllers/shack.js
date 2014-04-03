@@ -65,15 +65,19 @@ angular.module('lvshackApp')
 	    var uuid = hexUuid.substring(18,50);
 	    var major = hexUuid.substring(50,54);
 	    var minor = hexUuid.substring(54,58);
-	    var power = "0xff"+hexUuid.substring(58,60);
+	    var power = ~parseInt("0xFFFFFF"+hexUuid.substring(58,60));
 
 		obj.uuid = uuid;
 		obj.major = major;
 		obj.minor = Number(minor);
-		obj.power = parseInt(power);
+		obj.power = power;
 
-		var signal = [obj.rssi/5];
-		obj.dis = (Math.floor(-obj.rssi/2) + 1)/100;
+		var distance = obj.power + obj.rssi;
+		if(distance < 0){
+			obj.dis = 2;
+		} else {
+			obj.dis = 0;
+		}
 
 		console.log(uuid + ":" + major + ":" + minor + ":" + power);
 
@@ -108,7 +112,7 @@ angular.module('lvshackApp')
 	        url: $rootScope.url + "beacon/" + beacon.minor,
 	        method: "PUT",
 	        timeout: 2000,
-	        data: JSON.stringify({"distance": beacon.rssi}),
+	        data: JSON.stringify({"distance": beacon.dis}),
 	        headers: {'Content-Type': 'application/json'}
 	    }).success(function(data) {
 	    		console.log(data);
