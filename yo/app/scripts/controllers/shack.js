@@ -19,6 +19,14 @@ angular.module('lvshackApp')
     	$scope.scanNow();
 	});
 
+	$scope.progress = function(){
+		if($scope.scanning === true){
+			return 100;
+		} else {
+			return 0;
+		}
+	};
+
 	$scope.scanNow = function() {
 		if(cordovaReady === true){
 			console.log("Is initialized = " + window.bluetoothle.isInitialized());
@@ -58,67 +66,69 @@ angular.module('lvshackApp')
 
 	function startScanSuccess(obj)
 	{
-		$scope.scanning = true;
 	  if (obj.status === "scanResult")
 	  {
 	    var hexUuid = Base64.Convert(obj.advertisement);
 	    var uuid = hexUuid.substring(18,50);
 	    var major = hexUuid.substring(50,54);
 	    var minor = hexUuid.substring(54,58);
-	    var power = ~parseInt("0xFFFFFF"+hexUuid.substring(58,60));
+	    var power = -(~parseInt("0xFFFFFF"+hexUuid.substring(58,60)) + 1);
 
 		obj.uuid = uuid;
 		obj.major = major;
 		obj.minor = Number(minor);
 		obj.power = power;
 
-		var distance = obj.power + obj.rssi;
+		var distance = obj.rssi - obj.power;
 		if(distance < 0){
 			obj.dis = 2;
 		} else {
 			obj.dis = 0;
 		}
 
-		console.log(uuid + ":" + major + ":" + minor + ":" + power);
+		//console.log(uuid + ":" + major + ":" + minor + ":" + power);
 
 		var exists = false;
         $scope.beacons.forEach(function (d, index) {
-            if (d.advertisement === obj.advertisement) {
+            if (d.uuid+d.major+d.minor === obj.uuid+obj.major+obj.minor) {
                 exists = true;
                 $scope.beacons[index] = obj;
                 writeRssi(obj);
             }
         });
+
 		if(exists === false ) {
 			$scope.beacons.push(obj);
 			writeRssi(obj);
 		}
 		$scope.$apply();
-	  }
-	  else if (obj.status === "scanStarted")
-	  {
-	  	$scope.scanning = true;
-	    console.log("Scan was started successfully, stopping in 60 seconds");
-	    scanTimer = setTimeout(scanTimeout, 60000);
-	  }
-	  else
-	  {
-	    console.log("Unexpected start scan status: " + obj.status);
-	  }
+		}
+		else if (obj.status === "scanStarted")
+		{
+			$scope.scanning = true;
+			console.log("Scan was started successfully, stopping in 60 seconds");
+			scanTimer = setTimeout(scanTimeout, 20000);
+		}
+		else
+		{
+			console.log("Unexpected start scan status: " + obj.status);
+		}
 	}
 
     function writeRssi(beacon) {
-		$http({
-	        url: $rootScope.url + "beacon/" + beacon.minor,
-	        method: "PUT",
-	        timeout: 2000,
-	        data: JSON.stringify({"distance": beacon.dis}),
-	        headers: {'Content-Type': 'application/json'}
-	    }).success(function(data) {
-	    		console.log(data);
-	        }).error(function(data, status) {
-	        	console.log(data);
-	        });
+    	if( isNaN(beacon.minor) === false ){
+			$http({
+		        url: $rootScope.url + "beacon/" + beacon.minor,
+		        method: "PUT",
+		        timeout: 2000,
+		        data: JSON.stringify({"distance": beacon.dis}),
+		        headers: {'Content-Type': 'application/json'}
+		    }).success(function(data) {
+		    		//console.log(data);
+		        }).error(function(data, status) {
+		        	//console.log(data);
+		        });
+	    }
     }
 
 	function startScanError(obj)
@@ -150,6 +160,8 @@ angular.module('lvshackApp')
 	function scanTimeout()
 	{
 	  console.log("Scan time out, stopping");
+	  $scope.scanning = false;
+	  $scope.$apply();
 	  window.bluetoothle.stopScan(stopScanSuccess, stopScanError);
 	}
 

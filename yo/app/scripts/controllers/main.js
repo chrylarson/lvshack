@@ -7,7 +7,7 @@ angular.module('lvshackApp')
     $scope.updateEmail = function (email) {
     	if(typeof $scope.email !== 'undefined') {
     		$scope.$storage.email = $scope.email;
-    		$location.path('/shack');
+    		$location.path('/');
     		//register($scope.email);
     	} else if(typeof $scope.$storage.email !== 'undefined'){
     		$location.path('/');
